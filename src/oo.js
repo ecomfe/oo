@@ -85,7 +85,7 @@ void function (define) {
                 proto[key] = value;
             });
 
-            kclass.toString = toString();
+            kclass.toString = toString;
 
             return kclass;
         };
