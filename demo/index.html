@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-0/esl.min.js"></script>
+</head>
+<body>
+<style>
+    p {
+        text-align: center;
+    }
+</style>
+<script>
+    require.config({
+        baseUrl: '../src'
+    });
+
+    require(['oo'], function (Class) {
+        var Super = Class({
+            superProp1: 'superProp1',
+            superProp2: 'superProp2',
+            method: function () {
+                print(this.superProp1);
+            },
+            superMethod: function () {
+                print(this.superProp2);
+            }
+        });
+
+        var Sub = Class(Super, {
+            // constructor 会在实例化时调用
+            constructor: function (prop) {
+                // $super 会自动调用父类的同名方法
+                this.$super(arguments);
+                this.subProp = prop;
+                print("Sub init")
+            },
+            method: function () {
+                this.$super(arguments);
+                print(this.subProp);
+            }
+        });
+
+        var Sub1 = Class(Sub, {
+            constructor: function (prop1, prop2) {
+                this.$super(arguments);
+                this.sub1Prop = prop2;
+                print("Sub1 init")
+            },
+            method: function () {
+                this.$super(arguments);
+                print(this.sub1Prop)
+            }
+        });
+
+        function print(content) {
+            var p = document.createElement('p');
+            p.innerHTML = content;
+            document.body.appendChild(p);
+        }
+
+        function printLine(content) {
+            content = '<span style="color:red">' + content + '</span>';
+            print(Array(20).join('=') + content + Array(20).join('='));
+        }
+
+        printLine('new Super()');
+        var superIns = new Super();
+        printLine("new Sub('Sub')");
+        var sub = new Sub('Sub'); // print: Sub init
+        printLine("new Sub1('Sub', 'Sub1')");
+        var sub1 = new Sub1('Sub', 'Sub1'); // print: Sub init, Sub1 init
+        printLine('super.method()');
+        superIns.method(); // print: superProp1
+        printLine('sub.method()');
+        sub.method(); // print: superProp1, Sub
+        printLine('sub1.method()');
+        sub1.method(); // print: superProp1, Sub, Sub1
+        printLine('sub.superMethod()');
+        sub.superMethod(); // print: superProp2
+        printLine('sub1.superMethod()');
+        sub1.superMethod(); // print: superProp2
+    });
+</script>
+</body>
+</html>

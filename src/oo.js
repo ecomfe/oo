@@ -57,8 +57,8 @@ void function (define) {
          *      })
          *
          *      var superIns = new Super();
-         *      var sub = new Sub('Sub'); // alert: Super init, Sub init
-         *      var sub1 = new Sub1('Sub', 'Sub1') // alert: Super init, Sub init, Sub1 init
+         *      var sub = new Sub('Sub'); // alert: Sub init
+         *      var sub1 = new Sub1('Sub', 'Sub1') // alert: Sub init, Sub1 init
          *      superIns.method() // alert: superProp1
          *      sub.method() // alert: superProp1, Sub
          *      sub1.method() // alert: superProp1, Sub, Sub1
@@ -95,7 +95,7 @@ void function (define) {
         };
 
         Class.prototype = {
-            constructor: Class,
+            constructor: function () {},
             $self: Class,
             $superClass: Object,
             $super: function (args) {

@@ -1,0 +1,31 @@
+{
+  "name": "x-class",
+  "version": "0.0.0",
+  "description": "A powerful Javascript Class Factory (Object oriented)",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ecomfe/oo.git"
+  },
+  "keywords": [
+    "class",
+    "Class",
+    "Constructor",
+    "prototype",
+    "inheritance",
+    "class",
+    "inheritance"
+  ],
+  "author": "Exodia",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/ecomfe/oo/issues"
+  },
+  "homepage": "https://github.com/ecomfe/oo"
+}
