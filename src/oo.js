@@ -4,11 +4,13 @@
 void function (define) {
 
     define(function () {
-        var slice = [].slice;
+        var NAME_PROPERTY_NAME = '__name__';
+        var OWNER_PROPERTY_NAME = '__owner__';
 
         function Class() {
-            return Class.create.apply(Class, slice.call(arguments));
+            return Class.create.apply(Class, Array.prototype.slice.call(arguments));
         }
+
         /**
          * @class Class
          * 简单的 js oo 库
@@ -74,10 +76,10 @@ void function (define) {
 
             var kclass = inherit(BaseClass);
             var proto = kclass.prototype;
-            each(overrides, function (value, key) {
+            eachObject(overrides, function (value, key) {
                 if (typeof value == 'function') {
-                    value.__name__ = key;
-                    value.__owner__ = kclass;
+                    value[NAME_PROPERTY_NAME] = key;
+                    value[OWNER_PROPERTY_NAME] = kclass;
                 }
 
                 proto[key] = value;
@@ -131,7 +133,6 @@ void function (define) {
     }
 
 
-    var nativeEach = [].forEach;
     var hasEnumBug = !({toString: 1}['propertyIsEnumerable']('toString'));
     var enumProperties = [
         'constructor',
@@ -143,26 +144,15 @@ void function (define) {
         'valueOf'
     ];
 
-    function each(obj, fn) {
-        if (obj.forEach && obj.forEach === nativeEach) {
-            return obj.forEach(fn);
+    function eachObject(obj, fn) {
+        for (var k in obj) {
+            hasOwnProperty(obj, k) && fn(obj[k], k, obj);
         }
-
-        var i = 0;
-        if (Object.prototype.toString.call(obj) == '[object Array]') {
-            for (var len = obj.length; i < len; ++i) {
-                fn(obj[i], i, obj);
-            }
-        } else {
-            for (var k in obj) {
-                hasOwnProperty(obj, k) && fn(obj[k], k, obj);
-            }
-            //ie6-8 enum bug
-            if (hasEnumBug) {
-                for (i = enumProperties.length - 1; i > -1; --i) {
-                    var key = enumProperties[i];
-                    hasOwnProperty(obj, key) && fn(obj[key], key, obj);
-                }
+        //ie6-8 enum bug
+        if (hasEnumBug) {
+            for (var i = enumProperties.length - 1; i > -1; --i) {
+                var key = enumProperties[i];
+                hasOwnProperty(obj, key) && fn(obj[key], key, obj);
             }
         }
     }
