@@ -44,6 +44,7 @@ require(['oo'], function(Class) {
     var sub = new Sub('sub');
     sub.say('fuck!');
 });
+```
 
 ## attribute
 
