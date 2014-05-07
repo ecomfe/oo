@@ -68,9 +68,9 @@ void function (define) {
          */
         Class.create = function (BaseClass, overrides) {
             overrides = overrides || {};
+            BaseClass = BaseClass || Class;
             if (typeof BaseClass == 'object') {
-                // BaseClass 可以是 null
-                overrides = BaseClass || overrides;
+                overrides = BaseClass;
                 BaseClass = Class;
             }
 
