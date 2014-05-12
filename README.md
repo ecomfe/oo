@@ -44,16 +44,17 @@ require(['oo'], function(Class) {
     var sub = new Sub('sub');
     sub.say('fuck!');
 });
+```
 
 ## attribute
 
-### Class.prototype.constructor method
+### Class.prototype.constructor
 if config a constructor, and it is a function, it will be called on instantiation
 
-### Class.prototype.$super method
+### Class.prototype.$super
 $super method will call the Super Class's method with the same name;
 
-***notice***
+***notice:***
 because `$super` internal implementation uses the `arguments.caller`, $super can not be used in strict mode!
 
 ###  Class.prototype.$self
