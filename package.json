@@ -1,13 +1,10 @@
 {
-    "name": "x-class",
-    "edp": {
-        "name": "oo"
-    },
+    "name": "eoo",
     "version": "0.0.1",
     "description": "A powerful Javascript Class Factory (Object oriented)",
     "main": "index.js",
     "maintainers": {
-        "name": "exodia",
+        "name": "Exodia",
         "email": "d_xinxin@163.com"
     },
     "repository": {
@@ -23,7 +20,10 @@
         "class",
         "inheritance"
     ],
-    "author": "Exodia",
+    "author": {
+        "name": "Exodia",
+        "email": "d_xinxin@163.com"
+    },
     "license": "GPL",
     "bugs": {
         "url": "https://github.com/ecomfe/oo/issues"

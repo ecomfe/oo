@@ -1,4 +1,4 @@
-oo
+eoo
 ==
 
 Base library for OO style programming, supports both browser and node
