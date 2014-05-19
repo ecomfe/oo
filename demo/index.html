@@ -80,6 +80,11 @@
         sub.superMethod(); // print: superProp2
         printLine('sub1.superMethod()');
         sub1.superMethod(); // print: superProp2
+
+        var staticObj = Class.static({ print: print, printLine: printLine, prop: 'staticProp' });
+
+        staticObj.printLine('staticObj.print');
+        staticObj.print(staticObj.prop);
     });
 </script>
 </body>

@@ -5,6 +5,10 @@ Base library for OO style programming, supports both browser and node
 
 ## Usage
 
+### inherits Class
+
+Top Class is the ***Class***
+
 ```javascript
 // var Class = require('oo')
 require(['oo'], function(Class) {
@@ -46,6 +50,14 @@ require(['oo'], function(Class) {
 });
 ```
 
+### inherits Object
+
+This equals ```Object.create``` method.
+
+```javascript
+Class.static(obj);
+```
+
 ## attribute
 
 ### Class.prototype.constructor
@@ -74,10 +86,13 @@ var Super = Class();
 var Sub = Class(Super);
 
 Sub.$superClass === Super // true
-
 ```
 
 ### Class.create
 Class() equals Class.create()
+
+### Class.static
+creates a new object with the specified prototype object and properties.
+Just equals ```Object.create``` method.
 
 
