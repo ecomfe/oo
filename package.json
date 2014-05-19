@@ -2,7 +2,7 @@
     "name": "eoo",
     "version": "0.0.2",
     "description": "A powerful Javascript Class Factory (Object oriented)",
-    "main": "index.js",
+    "main": "oo.js",
     "maintainers": {
         "name": "Exodia",
         "email": "d_xinxin@163.com"
