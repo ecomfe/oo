@@ -2,6 +2,7 @@
 // - test case
 // - demo
 void function (define) {
+    var Empty = function () { };
 
     define(function () {
         var NAME_PROPERTY_NAME = '__name__';
@@ -90,6 +91,28 @@ void function (define) {
             return kclass;
         };
 
+        /**
+         *
+         * @type {Function} creates a new object with the specified prototype object and properties.
+         *  Just equals `Object.create` method.
+         * @param proto {Object} The object which should be the prototype of the newly-created object.
+         * @return {Object}
+         */
+        Class.static = typeof Object.create === 'function' ? Object.create :
+            function (o) {
+                if (arguments.length > 1) {
+                    throw Error('Second argument not supported');
+                }
+                if (o === null) {
+                    throw Error('Cannot set a null [[Prototype]]');
+                }
+                if (typeof o != 'object') {
+                    throw TypeError('Argument must be an object');
+                }
+                Empty.prototype = o;
+                return new Empty();
+            };
+
         Class.toString = function () {
             return 'function Class() { [native code] }';
         };
@@ -122,7 +145,6 @@ void function (define) {
                 this.constructor.apply(this, arguments);
         };
 
-        var Empty = function () { };
         Empty.prototype = BaseClass.prototype;
 
         var proto = kclass.prototype = new Empty();
@@ -131,7 +153,6 @@ void function (define) {
 
         return kclass;
     }
-
 
     var hasEnumBug = !({toString: 1}['propertyIsEnumerable']('toString'));
     var enumProperties = [
