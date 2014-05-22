@@ -85,6 +85,30 @@
 
         staticObj.printLine('staticObj.print');
         staticObj.print(staticObj.prop);
+
+        function OtherClass() {
+            printLine('OtherClass constructor called!');
+        }
+
+        OtherClass.prototype.say = function (content) {
+            print('OtherClass.prototype.say called!');
+            print('say: ' + content);
+        };
+
+        var OtherSub = Class(OtherClass, {
+            constructor: function () {
+                this.$super(arguments);
+                print('OtherSub constructor called!');
+            },
+            say: function () {
+                print('OtherSub.prototype.say called!');
+                this.$super(arguments);
+            }
+        });
+
+
+        var os = new OtherSub();
+        os.say('otherSub');
     });
 </script>
 </body>

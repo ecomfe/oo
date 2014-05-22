@@ -2,9 +2,8 @@
 // - test case
 // - demo
 void function (define) {
-    var Empty = function () { };
-
     define(function () {
+        var Empty = function () { };
         var NAME_PROPERTY_NAME = '__name__';
         var OWNER_PROPERTY_NAME = '__owner__';
 
@@ -103,9 +102,6 @@ void function (define) {
                 if (arguments.length > 1) {
                     throw Error('Second argument not supported');
                 }
-                if (o === null) {
-                    throw Error('Cannot set a null [[Prototype]]');
-                }
                 if (typeof o != 'object') {
                     throw TypeError('Argument must be an object');
                 }
@@ -135,55 +131,58 @@ void function (define) {
             }
         };
 
-        return Class;
-    });
+        function inherit(BaseClass) {
+            var kclass = function () {
+                return this.constructor !== kclass &&
+                    typeof this.constructor == 'function' &&
+                    this.constructor.apply(this, arguments);
+            };
 
-    function inherit(BaseClass) {
-        var kclass = function () {
-            return this.constructor !== kclass &&
-                typeof this.constructor == 'function' &&
-                this.constructor.apply(this, arguments);
-        };
+            Empty.prototype = BaseClass.prototype;
 
-        Empty.prototype = BaseClass.prototype;
+            var proto = kclass.prototype = new Empty();
+            proto.$self = kclass;
+            kclass.$superClass = BaseClass;
 
-        var proto = kclass.prototype = new Empty();
-        proto.$self = kclass;
-        kclass.$superClass = BaseClass;
+            if (!('$super' in proto)) {
+                proto.$super = Class.prototype.$super;
+            }
 
-        return kclass;
-    }
-
-    var hasEnumBug = !({toString: 1}['propertyIsEnumerable']('toString'));
-    var enumProperties = [
-        'constructor',
-        'hasOwnProperty',
-        'isPrototypeOf',
-        'propertyIsEnumerable',
-        'toString',
-        'toLocaleString',
-        'valueOf'
-    ];
-
-    function eachObject(obj, fn) {
-        for (var k in obj) {
-            hasOwnProperty(obj, k) && fn(obj[k], k, obj);
+            return kclass;
         }
-        //ie6-8 enum bug
-        if (hasEnumBug) {
-            for (var i = enumProperties.length - 1; i > -1; --i) {
-                var key = enumProperties[i];
-                hasOwnProperty(obj, key) && fn(obj[key], key, obj);
+
+        var hasEnumBug = !({toString: 1}['propertyIsEnumerable']('toString'));
+        var enumProperties = [
+            'constructor',
+            'hasOwnProperty',
+            'isPrototypeOf',
+            'propertyIsEnumerable',
+            'toString',
+            'toLocaleString',
+            'valueOf'
+        ];
+
+        function eachObject(obj, fn) {
+            for (var k in obj) {
+                hasOwnProperty(obj, k) && fn(obj[k], k, obj);
+            }
+            //ie6-8 enum bug
+            if (hasEnumBug) {
+                for (var i = enumProperties.length - 1; i > -1; --i) {
+                    var key = enumProperties[i];
+                    hasOwnProperty(obj, key) && fn(obj[key], key, obj);
+                }
             }
         }
-    }
 
-    function hasOwnProperty(obj, key) {
-        return Object.prototype.hasOwnProperty.call(obj, key);
-    }
+        function hasOwnProperty(obj, key) {
+            return Object.prototype.hasOwnProperty.call(obj, key);
+        }
 
-    function toString() {
-        return this.prototype.constructor.toString();
-    }
+        function toString() {
+            return this.prototype.constructor.toString();
+        }
 
+        return Class;
+    });
 }(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
