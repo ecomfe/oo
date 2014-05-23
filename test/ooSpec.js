@@ -1,5 +1,6 @@
 define(function (require) {
     var Class = require('oo');
+    Class.create();
 
     var isType = function (value, type) {
         return {}.toString.call(value).slice(8, -1).toUpperCase() === type.toUpperCase();
@@ -56,21 +57,32 @@ define(function (require) {
             });
         });
 
-        it('if called with no arguments, it should return a class extends Class', function () {
-            var ClassTest = Class.create();
-            var instance = new ClassTest();
-            expect(isType(ClassTest, 'function')).toBe(true);
-            expect(instance instanceof Class).toBe(true);
-        });
-
         it('if called with an argument and the argument is an object,'
             + ' it should return a class has the properties and functions in the argument',
             function () {
-                var instance = new Super();
-                expect(isType(Super, 'function')).toBe(true);
+                var Sub = Class.create({
+                        constructor: function () {
+                            this.$super(arguments);
+                        },
+                        method: function () {
+                            this.$super(arguments);
+                            return 'method';
+                        },
+                        method1: function () {
+                            return 'method1';
+                        }
+                    }
+                );
+                
+                expect(isType(Sub, 'function')).toBe(true);
+                expect(function () {
+                    new Sub();
+                }).not.toThrow();
+
+                var instance = new Sub();
                 expect(instance instanceof Class).toBe(true);
-                expect(instance.superMethod()).toEqual('superMethod');
-                expect(instance.superProp).toEqual('superProp');
+                expect(instance.method).toThrow();
+                expect(instance.method1()).toEqual('method1');
             }
         );
 
@@ -135,6 +147,9 @@ define(function (require) {
                     superMethod: function () {
                         var result = this.$super(arguments);
                         return result + ' ' + 'subMethod';
+                    },
+                    subMethod: function () {
+                        this.$super(arguments);
                     }
                 });
                 var sub = new Sub();
@@ -142,8 +157,138 @@ define(function (require) {
                 expect(sub instanceof Super).toBe(true);
                 expect(sub.property).toEqual('property');                
                 expect(sub.superMethod()).toEqual('superMethod subMethod');
+                expect(function () {
+                    sub.subMethod();
+                }).not.toThrow();
             }
         );
+
+        describe('第一个参数为普通的类', function () {
+            var BaseClass;
+            beforeEach(function () {
+                BaseClass = function () {
+                    this.property = 'BaseClassProperty';
+                };
+                BaseClass.prototype = {
+                    constructor: BaseClass,
+                    protoProperty: 'protoProperty',
+                    baseMethod1: function () {
+                        return 'baseMethod1';
+                    },
+                    baseMethod2: function (arg) {
+                        return arg;
+                    }
+                };
+            });
+
+            it('Should return a class extends BaseClass, and the instance have BaseClass\'s method and property',
+                function () {
+                    var Sub = Class.create(
+                        BaseClass,
+                        {
+                            constructor: function () {
+                                this.$super(arguments);
+                            },
+                            baseMethod1: function () {
+                                return this.$super(arguments);
+                            },
+                            baseMethod2: function (arg) {
+                                return this.$super(arguments);
+                            },
+                            subMethod1: function () {
+                                return 'subMethod1';
+                            },
+                            subMethod2: function () {
+                                this.$super(arguments);
+                            }
+
+                        }
+                    );
+
+                    expect(isType(Sub, 'function')).toBe(true);
+                    expect(Sub.$superClass).toEqual(BaseClass);
+
+                    var instance = new Sub();
+                    expect(instance.property).toEqual('BaseClassProperty');
+                    expect(instance.baseMethod1()).toEqual('baseMethod1');
+                    expect(instance.baseMethod2('hello')).toEqual('hello');
+                    expect(instance.subMethod1()).toEqual('subMethod1');
+                    expect(instance.protoProperty).toEqual('protoProperty');
+                    expect(function () {
+                        instance.subMethod2();
+                    }).toThrow();
+                }
+            );
+
+        });
+
+        describe('参数异常的情况', function () {
+            it('if called with no arguments, it should return a class extends Class', function () {
+                var ClassTest = Class.create();
+                var instance = new ClassTest();
+                expect(isType(ClassTest, 'function')).toBe(true);
+                expect(instance instanceof Class).toBe(true);
+            });
+
+            it('if called with null as argument, should return a class extends Class', function () {
+                var ClassTest = Class.create(null);
+                var instance = new ClassTest();
+                expect(isType(ClassTest, 'function')).toBe(true);
+                expect(instance instanceof Class).toBe(true);
+            });
+
+            it('if called with number, boolean or string as argument, should throw an error', function () {
+                expect(function () {
+                    Class.create(1);
+                }).toThrow();
+
+                expect(function () {
+                    Class.create(true);
+                }).toThrow();
+
+                expect(function () {
+                    Class.create('I am a string');
+                }).toThrow();
+            });
+
+            it('if first argument was not function and the second object,'
+                + ' when $super is called by subclass method, should not throw', 
+                function () {
+                    var Sub = Class.create(1, {
+                        constructor: function () {},
+                        method: function () {
+                            this.$super(arguments);
+                        }
+                    });
+                    var instance = new Sub();
+
+                    expect(function () {
+                        instance.method();
+                    }).not.toThrow();
+                }
+            );
+
+            it('if called with number, boolean, string or array as the second argument, should throw an error', 
+                function () {
+                    expect(function () {
+                        Class.create(Class(), 1);
+                    }).toThrow();
+
+                    expect(function () {
+                        Class.create(Class(), true);
+                    }).toThrow();
+
+                    expect(function () {
+                        Class.create(Class(), 'I am a string');
+                    }).toThrow();
+
+                    expect(function () {
+                        Class.create(Class(), [1, 2, 3, 4]);
+                    }).toThrow();
+                }
+            );
+
+        });
     });
     
     describe('Class.static', function () {

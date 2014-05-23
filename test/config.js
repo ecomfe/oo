@@ -23,11 +23,13 @@ module.exports = {
 
 
     // optionally, configure the reporter
+    reporter: ['progress', 'coverage'],
+    preprocessors: ['oo.js', 'coverage'],
     coverageReporter: {
         // text-summary | text | html | json | teamcity | cobertura | lcov
         // lcovonly | none | teamcity
         type : 'text|html',
-        dir : 'test/coverage/'
+        dir : 'coverage/'
     },
 
     // web server port
@@ -46,10 +48,10 @@ module.exports = {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: [/*'Chrome', 'Firefox', 'Safari', 'PhantomJS'*/'Firefox', 'Chrome'],
+    browsers: [/*'Chrome', 'Firefox', 'Safari', 'PhantomJS'*/'IE'],
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true
+    singleRun: false
 };
