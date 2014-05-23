@@ -251,23 +251,6 @@ define(function (require) {
                 }).toThrow();
             });
 
-            it('if first argument was not function and the second object,'
-                + ' when $super is called by subclass method, should not throw', 
-                function () {
-                    var Sub = Class.create(1, {
-                        constructor: function () {},
-                        method: function () {
-                            this.$super(arguments);
-                        }
-                    });
-                    var instance = new Sub();
-
-                    expect(function () {
-                        instance.method();
-                    }).not.toThrow();
-                }
-            );
-
             it('if called with number, boolean, string or array as the second argument, should throw an error', 
                 function () {
                     expect(function () {
