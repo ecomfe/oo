@@ -133,6 +133,11 @@ void function (define) {
 
         function inherit(BaseClass) {
             var kclass = function () {
+                // 兼容非 oo 创建的类继承 oo 类时的构造函数调用
+                if (kclass.caller === this.constructor) {
+                    return kclass.prototype.constructor.apply(this, arguments);
+                }
+
                 return this.constructor !== kclass &&
                     typeof this.constructor == 'function' &&
                     this.constructor.apply(this, arguments);
