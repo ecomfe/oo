@@ -1,6 +1,6 @@
 {
     "name": "eoo",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "A powerful Javascript Class Factory (Object oriented)",
     "main": "oo.js",
     "maintainers": {
