@@ -3,16 +3,11 @@
 // - demo
 void function (define) {
     define(function () {
-        var Empty = function () { };
+        var Empty = function () {};
         var NAME_PROPERTY_NAME = '__name__';
         var OWNER_PROPERTY_NAME = '__owner__';
 
-        function Class() {
-            return Class.create.apply(Class, Array.prototype.slice.call(arguments));
-        }
-
         /**
-         * @class Class
          * 简单的 js oo 库
          *
          * 用法:
@@ -66,24 +61,55 @@ void function (define) {
          *      sub1.superMethod() // alert: superProp2
          *
          */
+
+        /**
+         * Class构造函数
+         *
+         * @class Class
+         * @constructor
+         * @param {Function | Object} [BaseClass] 基类
+         * @param {Object} [overrides] 重写基类属性的对象
+         * @return {Function}
+         */
+        function Class() {
+            return Class.create.apply(Class, arguments);
+        }
+
+        /**
+         * 创建基类的继承类
+         *
+         * 3种重载方式
+         *
+         * - '.create()'
+         * - '.create(overrides)'
+         * - '.create(BaseClass, overrides)'
+         *
+         * @static
+         * @param {Function | Object} [BaseClass] 基类
+         * @param {Object} [overrides] 重写基类属性的对象
+         * @return {Function}
+         */
         Class.create = function (BaseClass, overrides) {
             overrides = overrides || {};
             BaseClass = BaseClass || Class;
-            if (typeof BaseClass == 'object') {
+            if (typeof BaseClass === 'object') {
                 overrides = BaseClass;
                 BaseClass = Class;
             }
 
             var kclass = inherit(BaseClass);
             var proto = kclass.prototype;
-            eachObject(overrides, function (value, key) {
-                if (typeof value == 'function') {
-                    value[NAME_PROPERTY_NAME] = key;
-                    value[OWNER_PROPERTY_NAME] = kclass;
-                }
+            eachObject(
+                overrides,
+                function (value, key) {
+                    if (typeof value === 'function') {
+                        value[NAME_PROPERTY_NAME] = key;
+                        value[OWNER_PROPERTY_NAME] = kclass;
+                    }
 
-                proto[key] = value;
-            });
+                    proto[key] = value;
+                }
+            );
 
             kclass.toString = toString;
 
@@ -97,18 +123,25 @@ void function (define) {
          * @param proto {Object} The object which should be the prototype of the newly-created object.
          * @return {Object}
          */
-        Class.static = typeof Object.create === 'function' ? Object.create :
-            function (o) {
+        Class.static = typeof Object.create === 'function'
+            ? Object.create
+            : function (o) {
                 if (arguments.length > 1) {
-                    throw Error('Second argument not supported');
+                    throw new Error('Second argument not supported');
                 }
                 if (typeof o != 'object') {
-                    throw TypeError('Argument must be an object');
+                    throw new TypeError('Argument must be an object');
                 }
                 Empty.prototype = o;
                 return new Empty();
             };
 
+        /**
+         * 统一 toString 执行结果
+         *
+         * @static
+         * @return {string}
+         */
         Class.toString = function () {
             return 'function Class() { [native code] }';
         };
@@ -119,18 +152,25 @@ void function (define) {
             $superClass: Object,
             $super: function (args) {
                 var method = this.$super.caller;
-                var name = method.__name__;
-                var superClass = method.__owner__.$superClass;
+                var name = method[NAME_PROPERTY_NAME];
+                var superClass = method[OWNER_PROPERTY_NAME].$superClass;
                 var superMethod = superClass.prototype[name];
 
                 if (typeof superMethod !== 'function') {
-                    throw "Call the super class's " + name + ", but it is not a function!";
+                    throw 'Call the super class\'s ' + name + ', but it is not a function!';
                 }
 
                 return superMethod.apply(this, args);
             }
         };
 
+        /**
+         * 返回基类的一个继承对象
+         *
+         * @ignore
+         * @param {Function} BaseClass 基类
+         * @return {Function}
+         */
         function inherit(BaseClass) {
             var kclass = function () {
                 /**
@@ -154,16 +194,16 @@ void function (define) {
 
             var proto = kclass.prototype = new Empty();
             proto.$self = kclass;
-            kclass.$superClass = BaseClass;
-
             if (!('$super' in proto)) {
                 proto.$super = Class.prototype.$super;
             }
 
+            kclass.$superClass = BaseClass;
+
             return kclass;
         }
 
-        var hasEnumBug = !({toString: 1}['propertyIsEnumerable']('toString'));
+        var hasEnumBug = !({ toString: 1 }.propertyIsEnumerable('toString'));
         var enumProperties = [
             'constructor',
             'hasOwnProperty',
@@ -174,6 +214,25 @@ void function (define) {
             'valueOf'
         ];
 
+        /**
+         * hasOwnProperty函数的封装
+         *
+         * @ignore
+         * @param {Object} obj 对象
+         * @param {string} key 属性名
+         * @return {boolean}
+         */
+        function hasOwnProperty(obj, key) {
+            return Object.prototype.hasOwnProperty.call(obj, key);
+        }
+
+        /**
+         * 遍历对象操作
+         *
+         * @ignore
+         * @param {Object} obj 目标对象
+         * @param {Function} fn 遍历操作
+         */
         function eachObject(obj, fn) {
             for (var k in obj) {
                 hasOwnProperty(obj, k) && fn(obj[k], k, obj);
@@ -187,14 +246,16 @@ void function (define) {
             }
         }
 
-        function hasOwnProperty(obj, key) {
-            return Object.prototype.hasOwnProperty.call(obj, key);
-        }
-
+        /**
+         * toString method
+         *
+         * @ignore
+         * @return {string}
+         */
         function toString() {
             return this.prototype.constructor.toString();
         }
 
         return Class;
     });
-}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
+}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(); });
