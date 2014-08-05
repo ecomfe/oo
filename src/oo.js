@@ -157,7 +157,7 @@ void function (define) {
                 var superMethod = superClass.prototype[name];
 
                 if (typeof superMethod !== 'function') {
-                    throw 'Call the super class\'s ' + name + ', but it is not a function!';
+                    throw new TypeError('Call the super class\'s ' + name + ', but it is not a function!');
                 }
 
                 return superMethod.apply(this, args);
@@ -258,4 +258,4 @@ void function (define) {
 
         return Class;
     });
-}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(); });
+}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
