@@ -3,9 +3,9 @@
 // - demo
 void function (define) {
     define(function () {
-        var Empty = function () {};
-        var NAME_PROPERTY_NAME = '__name__';
-        var OWNER_PROPERTY_NAME = '__owner__';
+        var Empty = function () { };
+        var NAME_PROPERTY_NAME = '__eooName__';
+        var OWNER_PROPERTY_NAME = '__eooOwner__';
 
         /**
          * 简单的 js oo 库
