@@ -5,15 +5,15 @@ void function (define, undefined) {
 
     define(
         function (require) {
-            var ATTRIBUTES = '__eooAttributes__';
+            var MEMBERS = '__eooPrivateMembers__';
 
             function simpleGetter() {
-                return typeof this[ATTRIBUTES] === 'object' ? this[ATTRIBUTES][name] : undefined;
+                return typeof this[MEMBERS] === 'object' ? this[MEMBERS][name] : undefined;
             }
 
             function simpleSetter(value) {
-                this[ATTRIBUTES] = this[ATTRIBUTES] || {};
-                this[ATTRIBUTES][name] = value;
+                this[MEMBERS] = this[MEMBERS] || {};
+                this[MEMBERS][name] = value;
             }
 
             /**
