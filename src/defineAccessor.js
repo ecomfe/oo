@@ -9,13 +9,13 @@ void function (define, undefined) {
 
             function simpleGetter(name) {
                 var body = 'return typeof this.' + MEMBERS + ' === \'object\' ? this.'
-                    + MEMBERS + '.' + name + ' : undefined;';
+                    + MEMBERS + '[\'' + name + '\'] : undefined;';
                 return new Function(body);
             }
 
             function simpleSetter(name) {
                 var body = 'this.' + MEMBERS + ' = this.' + MEMBERS + ' || {};\n'
-                    + 'this.' + MEMBERS + '.' + name + ' = value;' ;
+                    + 'this.' + MEMBERS + '[\'' + name + '\'] = value;' ;
                 return new Function('value', body);
             }
 
