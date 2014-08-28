@@ -15,7 +15,7 @@ require.config({
     baseUrl: '../src'
 });
 
-require(['oo'], function (Class) {
+require(['main'], function (Class) {
     var Super = Class({
         superProp1: 'superProp1',
         superProp2: 'superProp2',
@@ -240,6 +240,14 @@ require(['oo'], function (Class) {
 
     var e2 = new EooClass2('prop1', 'prop2');
     e2.test();
+
+    Class.defineAccessor(Sub.prototype, 'testProp');
+    var accessorSub = new Sub();
+    accessorSub.setTestProp('test');
+    printLine(accessorSub.getTestProp());
+    accessorSub.setTestProp('test1');
+    printLine(accessorSub.getTestProp());
+
 });
 </script>
 </body>
