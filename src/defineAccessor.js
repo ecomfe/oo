@@ -7,13 +7,16 @@ void function (define, undefined) {
         function (require) {
             var MEMBERS = '__eooPrivateMembers__';
 
-            function simpleGetter() {
-                return typeof this[MEMBERS] === 'object' ? this[MEMBERS][name] : undefined;
+            function simpleGetter(name) {
+                var body = 'return typeof this.' + MEMBERS + ' === \'object\' ? this.'
+                    + MEMBERS + '.' + name + ' : undefined;';
+                return new Function(body);
             }
 
-            function simpleSetter(value) {
-                this[MEMBERS] = this[MEMBERS] || {};
-                this[MEMBERS][name] = value;
+            function simpleSetter(name) {
+                var body = 'this.' + MEMBERS + ' = this.' + MEMBERS + ' || {};\n'
+                    + 'this.' + MEMBERS + '.' + name + ' = value;' ;
+                return new Function('value', body);
             }
 
             /**
@@ -31,8 +34,8 @@ void function (define, undefined) {
                 var setter = 'set' + upperName;
 
                 if (!accessor) {
-                    obj[getter] = !accessor || typeof accessor.get !== 'function' ? simpleGetter : accessor.get;
-                    obj[setter] = !accessor || typeof accessor.set !== 'function' ? simpleSetter : accessor.set;
+                    obj[getter] = !accessor || typeof accessor.get !== 'function' ? simpleGetter(name) : accessor.get;
+                    obj[setter] = !accessor || typeof accessor.set !== 'function' ? simpleSetter(name) : accessor.set;
                 }
                 else {
                     typeof accessor.get === 'function' && (obj[getter] = accessor.get);

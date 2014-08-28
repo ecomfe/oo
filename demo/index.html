@@ -242,7 +242,10 @@ require(['main'], function (Class) {
     e2.test();
 
     Class.defineAccessor(Sub.prototype, 'testProp');
-    var accessorSub = new Sub();
+    window.accessorSub = new Sub();
+    console.log(accessorSub.setTestProp);
+    console.log(accessorSub.getTestProp);
+
     accessorSub.setTestProp('test');
     printLine(accessorSub.getTestProp());
     accessorSub.setTestProp('test1');
