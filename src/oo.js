@@ -3,9 +3,9 @@
 // - demo
 void function (define) {
     define(function () {
-        var Empty = function () {};
-        var NAME_PROPERTY_NAME = '__name__';
-        var OWNER_PROPERTY_NAME = '__owner__';
+        var Empty = function () { };
+        var NAME_PROPERTY_NAME = '__eooName__';
+        var OWNER_PROPERTY_NAME = '__eooOwner__';
 
         /**
          * 简单的 js oo 库
@@ -173,21 +173,8 @@ void function (define) {
          */
         function inherit(BaseClass) {
             var kclass = function () {
-                /**
-                 * 若未进行 constructor 的重写，则klass.prototype.constructor指向BaseClass.prototype.constructor
-                 */
+                // 若未进行 constructor 的重写，则klass.prototype.constructor指向BaseClass.prototype.constructor
                 return kclass.prototype.constructor.apply(this, arguments);
-
-                // 下面是之前的代码，我也不知道为什么写的这么多，还有 bug- -！！5555~~
-
-                // 兼容非 oo 创建的类继承 oo 类时的构造函数调用
-                /*if (kclass.caller === this.constructor) {
-                 return kclass.prototype.constructor.apply(this, arguments);
-                 }
-
-                 return this.constructor !== kclass &&
-                 typeof this.constructor == 'function' &&
-                 this.constructor.apply(this, arguments);*/
             };
 
             Empty.prototype = BaseClass.prototype;
