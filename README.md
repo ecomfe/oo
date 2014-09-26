@@ -60,16 +60,16 @@ Class.static(obj);
 
 ## attribute
 
-### Class.prototype.constructor
+### Class#constructor
 if config a constructor, and it is a function, it will be called on instantiation
 
-### Class.prototype.$super
+### Class#$super
 $super method will call the Super Class's method with the same name;
 
 ***notice:***
 because `$super` internal implementation uses the `arguments.caller`, $super can not be used in strict mode!
 
-###  Class.prototype.$self
+###  Class#$self
 this property references the instance's Class:
 
 ```javascript
@@ -89,10 +89,19 @@ Sub.$superClass === Super // true
 ```
 
 ### Class.create
-Class() equals Class.create()
+alias of Class
 
 ### Class.static
 creates a new object with the specified prototype object and properties.
 Just equals ```Object.create``` method.
+
+### Class.defineAccessor
+quickly generator the accessor for the object;
+
+ ```javascript
+ Class.defineAccessor(obj, 'name');
+ typeof obj.setName === 'function'; // true
+ typeof obj.getName === 'function'; // true
+ ```
 
 
