@@ -150,7 +150,7 @@ void function (define) {
             constructor: function () {},
             $self: Class,
             $superClass: Object,
-            $super: function (args) {
+            $super: function () {
                 var method = this.$super.caller;
                 var name = method[NAME_PROPERTY_NAME];
                 var superClass = method[OWNER_PROPERTY_NAME].$superClass;
@@ -160,7 +160,7 @@ void function (define) {
                     throw new TypeError('Call the super class\'s ' + name + ', but it is not a function!');
                 }
 
-                return superMethod.apply(this, args);
+                return superMethod.apply(this, arguments);
             }
         };
 
