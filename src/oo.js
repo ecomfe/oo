@@ -129,7 +129,7 @@ void function (define) {
                 if (arguments.length > 1) {
                     throw new Error('Second argument not supported');
                 }
-                if (typeof o != 'object') {
+                if (!(o instanceof Object)) {
                     throw new TypeError('Argument must be an object');
                 }
                 Empty.prototype = o;

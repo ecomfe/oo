@@ -1,7 +1,6 @@
 define(
     ['eoo'],
     function (Class) {
-        debugger
         describe('Class Base Test', function () {
             var isType = function (value, type) {
                 return {}.toString.call(value).slice(8, -1).toUpperCase() === type.toUpperCase();
@@ -59,7 +58,7 @@ define(
                 });
 
                 it('if called with an argument and the argument is an object,'
-                        + ' it should return a class has the properties and functions in the argument',
+                    + ' it should return a class has the properties and functions in the argument',
                     function () {
                         var Sub = Class.create({
                                 constructor: function () {
@@ -88,7 +87,7 @@ define(
                 );
 
                 it('if called with an argument and the argument is a function,'
-                        + ' it should return a class extends the argument',
+                    + ' it should return a class extends the argument',
                     function () {
                         var Sub = Class.create(Super);
                         var sub = new Sub();
@@ -100,7 +99,7 @@ define(
                 );
 
                 it('if called with two arguments and the first is a function, second object'
-                        + ' it should return a class extends the first and has the properties and functions in the second',
+                    + ' it should return a class extends the first and has the properties and functions in the second',
                     function () {
                         var Sub = Class.create(Super, {
                             subProp: 'subProp',
@@ -119,8 +118,8 @@ define(
                 );
 
                 it('if called with two arguments and the first is a function, second object'
-                        + ' it should return a class extends the first argument and the properties'
-                        + ' and functions of Super class can be overrided by the second argument',
+                    + ' it should return a class extends the first argument and the properties'
+                    + ' and functions of Super class can be overrided by the second argument',
                     function () {
                         var Sub = Class.create(Super, {
                             superProp: 'subProp',
@@ -137,8 +136,8 @@ define(
                 );
 
                 it('if called with two arguments and the first is Super class, second object'
-                        + ' it should return a class extends Super and the functions of Super'
-                        + ' class can be called by the same named functions in the object',
+                    + ' it should return a class extends Super and the functions of Super'
+                    + ' class can be called by the same named functions in the object',
                     function () {
                         var Sub = Class.create(Super, {
                             constructor: function () {
@@ -238,39 +237,39 @@ define(
                         expect(instance instanceof Class).toBe(true);
                     });
 
-                   /* it('if called with number, boolean or string as argument, should throw an error', function () {
-                        expect(function () {
-                            Class.create(1);
-                        }).toThrow();
+                    /* it('if called with number, boolean or string as argument, should throw an error', function () {
+                     expect(function () {
+                     Class.create(1);
+                     }).toThrow();
 
-                        expect(function () {
-                            Class.create(true);
-                        }).toThrow();
+                     expect(function () {
+                     Class.create(true);
+                     }).toThrow();
 
-                        expect(function () {
-                            Class.create('I am a string');
-                        }).toThrow();
-                    });*/
+                     expect(function () {
+                     Class.create('I am a string');
+                     }).toThrow();
+                     });*/
 
                     /*it('if called with number, boolean, string or array as the second argument, should throw an error',
-                        function () {
-                            expect(function () {
-                                Class.create(Class(), 1);
-                            }).toThrow();
+                     function () {
+                     expect(function () {
+                     Class.create(Class(), 1);
+                     }).toThrow();
 
-                            expect(function () {
-                                Class.create(Class(), true);
-                            }).toThrow();
+                     expect(function () {
+                     Class.create(Class(), true);
+                     }).toThrow();
 
-                            expect(function () {
-                                Class.create(Class(), 'I am a string');
-                            }).toThrow();
+                     expect(function () {
+                     Class.create(Class(), 'I am a string');
+                     }).toThrow();
 
-                            expect(function () {
-                                Class.create(Class(), [1, 2, 3, 4]);
-                            }).toThrow();
-                        }
-                    );*/
+                     expect(function () {
+                     Class.create(Class(), [1, 2, 3, 4]);
+                     }).toThrow();
+                     }
+                     );*/
 
                 });
             });
@@ -288,21 +287,26 @@ define(
                     }).toThrow();
                 });
 
-                it('If called with argument typeof which is not object, should throw error', function () {
+                it('If called with argument which instanceof Object is false, should throw error', function () {
                     expect(function () {
                         Class.static('I am a string!');
                     }).toThrow();
                 });
 
-                it('If called with argument typeof which is object, return a instance with argument as its prototype',
+                it('If called with argument typeof which is instance of Object, return a instance with argument as its prototype',
                     function () {
-                        var argument = {
+                        var object = {
                             method: function () {
                                 return 'I am a method!';
                             }
                         };
-                        var instance = Class.static(argument);
-                        expect(argument.isPrototypeOf(instance)).toBe(true);
+
+                        var fun = function () {};
+
+                        var instance = Class.static(object);
+                        var instanceFun = Class.static(fun);
+                        expect(object.isPrototypeOf(instance)).toBe(true);
+                        expect(fun.isPrototypeOf(instanceFun)).toBe(true);
                     }
                 );
             });
