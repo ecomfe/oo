@@ -1,8 +1,8 @@
 {
     "name": "eoo",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "A powerful Javascript Class Factory (Object oriented)",
-    "main": "main.js",
+    "main": "src/main.js",
     "maintainers": {
         "name": "Exodia",
         "email": "d_xinxin@163.com"
@@ -39,5 +39,14 @@
         "karma-ie-launcher": "^0.1.5",
         "karma-jasmine": "^0.2.2",
         "karma-phantomjs-launcher": "^0.1.4"
+    },
+    "edp": {
+        "wwwroot": "/",
+        "depDir": "dep",
+        "srcDir": "src",
+        "main": "main",
+        "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
+        "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-2/esl.js",
+        "dependencies": {}
     }
 }
