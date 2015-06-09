@@ -17,6 +17,21 @@ require.config({
 });
 
 require(['main'], function (Class) {
+    // 测试参数不合法
+    try {
+        var erroClass = function () {};
+        Class.defineMembers(erroClass, {
+            superProp1: 'superProp1',
+            superProp2: 'superProp2',
+            method: function () {
+                print(this.superProp1);
+            }
+        })
+    }
+    catch (e) {
+        console.log(e);
+    }
+
     var Super = Class();
     // 扩展Super接口
     Class.defineMembers(Super, {

@@ -136,13 +136,20 @@ void function (define) {
                 return new Empty();
             };
 
+        /**
+         * 创建类的方法
+         *
+         * @param {Function} [BaseClass] 类构造函数
+         * @param {Object} [exports] 类属性的对象
+         */
         Class.defineMembers = function (BaseClass, exports) {
             BaseClass = BaseClass || function () { };
             exports = exports || {};
-            if(typeof BaseClass !== 'function' && !proto instanceof Class){
-                throw new TypeError('Argument[0] must be a function create by Class!');
+            if (typeof BaseClass !== 'function' || !(BaseClass.prototype instanceof Class)) {
+                throw new TypeError('Arguments[0] must be a function create by Class!');
             }
-            var proto = BaseClass.prototype;         
+            
+            var proto = BaseClass.prototype;
             var kclass = proto.$self;
             eachObject(
                 exports,
@@ -153,7 +160,7 @@ void function (define) {
                     }
                     proto[key] = value;
                 }
-            );            
+            );          
         };
 
         /**
