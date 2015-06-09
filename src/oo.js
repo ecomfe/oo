@@ -136,6 +136,26 @@ void function (define) {
                 return new Empty();
             };
 
+        Class.defineMembers = function (BaseClass, exports) {
+            BaseClass = BaseClass || function () { };
+            exports = exports || {};
+            if(typeof BaseClass !== 'function' && !proto instanceof Class){
+                throw new TypeError('Argument[0] must be a function create by Class!');
+            }
+            var proto = BaseClass.prototype;         
+            var kclass = proto.$self;
+            eachObject(
+                exports,
+                function (value, key) {
+                    if (typeof value === 'function') {
+                        value[NAME_PROPERTY_NAME] = key;
+                        value[OWNER_PROPERTY_NAME] = kclass;
+                    }
+                    proto[key] = value;
+                }
+            );            
+        };
+
         /**
          * 统一 toString 执行结果
          *
