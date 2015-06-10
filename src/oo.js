@@ -145,11 +145,12 @@ void function (define) {
         Class.defineMembers = function (BaseClass, exports) {
             BaseClass = BaseClass || function () { };
             exports = exports || {};
-            if (typeof BaseClass !== 'function' || !(BaseClass.prototype instanceof Class)) {
+            var proto = BaseClass.prototype;
+            // BaseClass 必须由Class构造
+            if (typeof BaseClass !== 'function' || !proto.$self) {
                 throw new TypeError('Arguments[0] must be a function create by Class!');
             }
-            
-            var proto = BaseClass.prototype;
+                   
             var kclass = proto.$self;
             eachObject(
                 exports,

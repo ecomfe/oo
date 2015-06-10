@@ -17,22 +17,10 @@ require.config({
 });
 
 require(['main'], function (Class) {
-    // 测试参数不合法
-    try {
-        var erroClass = function () {};
-        Class.defineMembers(erroClass, {
-            superProp1: 'superProp1',
-            superProp2: 'superProp2',
-            method: function () {
-                print(this.superProp1);
-            }
-        })
-    }
-    catch (e) {
-        console.log(e);
-    }
-
     var Super = Class();
+    var Sub = Class(Super);
+    var Sub1 = Class(Sub);
+
     // 扩展Super接口
     Class.defineMembers(Super, {
         superProp1: 'superProp1',
@@ -44,8 +32,7 @@ require(['main'], function (Class) {
             print(this.superProp2);
         }
     });
-
-    var Sub = Class(Super);
+    
     // 扩展Sub接口
     Class.defineMembers(Sub, {
         // constructor 会在实例化时调用
@@ -60,8 +47,7 @@ require(['main'], function (Class) {
             print(this.subProp);
         }
     });
-
-    var Sub1 = Class(Sub);
+    
     // 扩展Sub1接口
     Class.defineMembers(Sub1, {
         constructor: function (prop1, prop2) {
@@ -124,7 +110,8 @@ require(['main'], function (Class) {
         print('say: ' + content);
     };
 
-    var OtherSub = Class(OtherClass, {
+    var OtherSub = Class(OtherClass);
+    Class.defineMembers(OtherSub, {
         constructor: function () {
             this.$super(arguments);
             print('OtherSub constructor called!');
