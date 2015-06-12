@@ -143,25 +143,22 @@ void function (define) {
          * @param {Object} [exports] 类属性的对象
          */
         Class.defineMembers = function (BaseClass, exports) {
-            BaseClass = BaseClass || function () { };
             exports = exports || {};
-            var proto = BaseClass.prototype;
-            // BaseClass 必须由Class构造
-            if (typeof BaseClass !== 'function' || !proto.$self) {
-                throw new TypeError('Arguments[0] must be a function create by Class!');
+            if (typeof BaseClass !== 'function') {
+                throw new TypeError('First argument must be a function');
             }
-                   
-            var kclass = proto.$self;
+
+            var proto = BaseClass.prototype;
             eachObject(
                 exports,
                 function (value, key) {
                     if (typeof value === 'function') {
                         value[NAME_PROPERTY_NAME] = key;
-                        value[OWNER_PROPERTY_NAME] = kclass;
+                        value[OWNER_PROPERTY_NAME] = BaseClass;
                     }
                     proto[key] = value;
                 }
-            );          
+            );
         };
 
         /**
