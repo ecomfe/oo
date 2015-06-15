@@ -316,6 +316,70 @@ define(
                     expect(Class.toString()).toEqual('function Class() { [native code] }');
                 });
             });
+
+            describe('Class.defineMembers', function () {
+                var Super = Class();
+                var Sub = Class(Super);
+                var Sub1 = Class(Sub);
+
+                // 扩展Super接口
+                Class.defineMembers(Super, {
+                    superProp1: 'superProp1',
+                    superProp2: 'superProp2',
+                    method: function () {
+                        return this.superProp1;
+                    },
+                    superMethod: function () {
+                        return this.superProp2;
+                    }
+                });
+
+                // 扩展Sub接口
+                Class.defineMembers(Sub, {
+                    // constructor 会在实例化时调用
+                    constructor: function (prop) {
+                        // $super 会自动调用父类的同名方法
+                        this.$super(arguments);
+                        this.subProp = prop;
+                    },
+                    method: function () {
+                        return this.$super(arguments) + ', ' + this.subProp;
+                    }
+                });
+
+                // 扩展Sub1接口
+                Class.defineMembers(Sub1, {
+                    constructor: function (prop1, prop2) {
+                        this.$super(arguments);
+                        this.sub1Prop = prop2;
+                    },
+                    method: function () {
+                        return this.$super(arguments) + ', ' + this.sub1Prop;
+                    }
+                });
+                var superIns = new Super();
+                var sub = new Sub('Sub');
+                var sub1 = new Sub1('Sub', 'Sub1');
+
+                it('should return superProp1', function () {
+                    expect(superIns.method()).toEqual('superProp1');
+                });
+                it('should return superProp1, Sub', function () {
+                    expect(sub.method()).toEqual('superProp1, Sub');
+                });
+                it('should return superProp1, Sub, Sub1', function () {
+                    expect(sub1.method()).toEqual('superProp1, Sub, Sub1');
+                });
+                it('should return superProp2', function () {
+                    expect(superIns.superMethod()).toEqual('superProp2');
+                });
+                it('should return superProp2', function () {
+                    expect(sub.superMethod()).toEqual('superProp2');
+                });
+                it('should return superProp2', function () {
+                    expect(sub1.superMethod()).toEqual('superProp2');
+                });
+            });
         });
     }
 );

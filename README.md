@@ -104,4 +104,26 @@ quickly generator the accessor for the object;
  typeof obj.getName === 'function'; // true
  ```
 
+### Class.defineMembers
+Add properties to the function prototype so we can create a sub class first, and then add members to the sub class.
+This will enable the function in the added members to use ```this.$super()``` feature;
+
+```javascript
+var Super = Class({
+    method: function () {
+        console.log('super method!');
+    }
+});
+var Sub = Class(Super);
+oo.defineMembers(Sub, {
+    method: function () {
+        this.$super(arguments);
+        console.log('sub method');
+    }
+});
+
+var instance = new Sub();
+instance.method(); // 'super method'; 'sub method';
+
+```
 

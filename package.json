@@ -1,6 +1,6 @@
 {
     "name": "eoo",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "A powerful Javascript Class Factory (Object oriented)",
     "main": "src/main.js",
     "maintainers": {
@@ -14,6 +14,16 @@
     "scripts": {
         "test": "cd test && karma start --singleRun"
     },
+    "contributors": [
+        {
+            "name": "xiaoxin0818",
+            "url": "https://github.com/xiaoxin0818"
+        },
+        {
+          "name": "yanghuabei",
+          "url": "https://github.com/yanghuabei"
+        }
+    ],
     "keywords": [
         "class",
         "Class",
@@ -27,7 +37,7 @@
         "name": "Exodia",
         "email": "d_xinxin@163.com"
     },
-    "license": "GPL",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/ecomfe/oo/issues"
     },
