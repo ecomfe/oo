@@ -139,7 +139,7 @@ void function (define) {
         /**
          * 创建类的方法
          *
-         * @param {Function} [BaseClass] 类构造函数
+         * @param {Function} BaseClass 类构造函数
          * @param {Object} [exports] 类属性的对象
          */
         Class.defineMembers = function (BaseClass, exports) {
