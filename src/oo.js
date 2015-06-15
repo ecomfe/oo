@@ -137,6 +137,31 @@ void function (define) {
             };
 
         /**
+         * 创建类的方法
+         *
+         * @param {Function} [BaseClass] 类构造函数
+         * @param {Object} [exports] 类属性的对象
+         */
+        Class.defineMembers = function (BaseClass, exports) {
+            exports = exports || {};
+            if (typeof BaseClass !== 'function') {
+                throw new TypeError('First argument must be a function');
+            }
+
+            var proto = BaseClass.prototype;
+            eachObject(
+                exports,
+                function (value, key) {
+                    if (typeof value === 'function') {
+                        value[NAME_PROPERTY_NAME] = key;
+                        value[OWNER_PROPERTY_NAME] = BaseClass;
+                    }
+                    proto[key] = value;
+                }
+            );
+        };
+
+        /**
          * 统一 toString 执行结果
          *
          * @static
