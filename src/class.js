@@ -1,6 +1,3 @@
-// TODO:
-// - test case
-// - demo
 void function (define) {
     define(function () {
         var Empty = function () { };

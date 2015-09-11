@@ -4,7 +4,7 @@
 void function (define) {
     define(
         function (require) {
-            var oo = require('./oo');
+            var oo = require('./class');
             oo.defineAccessor = require('./defineAccessor');
 
             return oo;
