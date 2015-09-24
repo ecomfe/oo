@@ -1,16 +1,38 @@
+/**
+ * @file class 提供 Class 基础支持
+ * @author exodia(d_xinxin@163.com)
+ */
 void function (define) {
-    define(function () {
-        var Empty = function () { };
-        var NAME_PROPERTY_NAME = '__eooName__';
-        var OWNER_PROPERTY_NAME = '__eooOwner__';
+    define(
+        function (require) {
+            var Empty = function () { };
+            var constTable = require('./const');
+            var NAME_PROPERTY = constTable.NAME;
+            var OWNER_PROPERTY = constTable.OWNER;
+            var PRIVATE_KEY = constTable.PRIVATE_KEY;
+            var META = constTable.META;
+            var u = require('./util');
 
-        /**
-         * 简单的 js oo 库
-         *
-         * 用法:
-         *      @example
-         *      // 来个简单的基类，最简单的是 var Super = Class();
-         *      var Super = Class({
+            var setValue = function (proto, property, value) {
+                proto[property] = value;
+            };
+
+            if (Object.defineProperty) {
+                setValue = function (proto, property, value) {
+                    Object.defineProperty(proto, property, {
+                        configurable: true, writable: true,
+                        enumerable: true, value: value
+                    });
+                };
+            }
+
+            /**
+             * 简单的 js oo 库
+             *
+             * 用法:
+             *      @example
+             *      // 来个简单的基类，最简单的是 var Super = Class();
+             *      var Super = Class({
          *          superProp1: 'superProp1',
          *          superProp2: 'superProp2',
          *          method: function(){
@@ -20,9 +42,9 @@ void function (define) {
          *              alert(this.superProp2);
          *          }
          *      })
-         *
-         *      // 来个派生类，继承 Super
-         *      var Sub = Class(Super, {
+             *
+             *      // 来个派生类，继承 Super
+             *      var Sub = Class(Super, {
          *          // constructor 会在实例化时调用
          *          constructor: function(prop){
          *             // $super 会自动调用父类的同名方法
@@ -35,8 +57,8 @@ void function (define) {
          *              alert(this.subProp);
          *          }
          *      })
-         *
-         *      var Sub1 = Class(Sub, {
+             *
+             *      var Sub1 = Class(Sub, {
          *          constructor: function(prop1, prop2){
          *             this.$super(arguments)
          *             this.sub1Prop = prop2;
@@ -47,82 +69,90 @@ void function (define) {
          *              alert(this.sub1Prop)
          *          }
          *      })
-         *
-         *      var superIns = new Super();
-         *      var sub = new Sub('Sub'); // alert: Sub init
-         *      var sub1 = new Sub1('Sub', 'Sub1') // alert: Sub init, Sub1 init
-         *      superIns.method() // alert: superProp1
-         *      sub.method() // alert: superProp1, Sub
-         *      sub1.method() // alert: superProp1, Sub, Sub1
-         *      sub.superMethod() // alert: superProp2
-         *      sub1.superMethod() // alert: superProp2
-         *
-         */
+             *
+             *      var superIns = new Super();
+             *      var sub = new Sub('Sub'); // alert: Sub init
+             *      var sub1 = new Sub1('Sub', 'Sub1') // alert: Sub init, Sub1 init
+             *      superIns.method() // alert: superProp1
+             *      sub.method() // alert: superProp1, Sub
+             *      sub1.method() // alert: superProp1, Sub, Sub1
+             *      sub.superMethod() // alert: superProp2
+             *      sub1.superMethod() // alert: superProp2
+             *
+             */
 
-        /**
-         * Class构造函数
-         *
-         * @class Class
-         * @constructor
-         * @param {Function | Object} [BaseClass] 基类
-         * @param {Object} [overrides] 重写基类属性的对象
-         * @return {Function}
-         */
-        function Class() {
-            return Class.create.apply(Class, arguments);
-        }
-
-        /**
-         * 创建基类的继承类
-         *
-         * 3种重载方式
-         *
-         * - '.create()'
-         * - '.create(overrides)'
-         * - '.create(BaseClass, overrides)'
-         *
-         * @static
-         * @param {Function | Object} [BaseClass] 基类
-         * @param {Object} [overrides] 重写基类属性的对象
-         * @return {Function}
-         */
-        Class.create = function (BaseClass, overrides) {
-            overrides = overrides || {};
-            BaseClass = BaseClass || Class;
-            if (typeof BaseClass === 'object') {
-                overrides = BaseClass;
-                BaseClass = Class;
+            /**
+             * Class构造函数
+             *
+             * @class Class
+             * @constructor
+             * @param {Function | Object} [BaseClass] 基类
+             * @param {Object} [overrides] 重写基类属性的对象
+             * @return {Function}
+             */
+            function Class() {
+                return Class.create.apply(Class, arguments);
             }
 
-            var kclass = inherit(BaseClass);
-            var proto = kclass.prototype;
-            eachObject(
-                overrides,
-                function (value, key) {
-                    if (typeof value === 'function') {
-                        value[NAME_PROPERTY_NAME] = key;
-                        value[OWNER_PROPERTY_NAME] = kclass;
-                    }
-
-                    proto[key] = value;
+            /**
+             * 创建基类的继承类
+             *
+             * 3种重载方式
+             *
+             * - '.create()'
+             * - '.create(overrides)'
+             * - '.create(BaseClass, overrides)'
+             *
+             * @static
+             * @param {Function | Object} [BaseClass] 基类
+             * @param {Object} [overrides] 重写基类属性的对象
+             * @param {string} [name] 类名
+             * @return {Function}
+             */
+            Class.create = function (BaseClass, overrides, name) {
+                overrides = overrides || {};
+                BaseClass = BaseClass || Class;
+                if (typeof BaseClass === 'object') {
+                    overrides = BaseClass;
+                    BaseClass = Class;
                 }
-            );
 
-            kclass.toString = toString;
+                var kclass = inherit(BaseClass);
+                kclass.toString = toString;
+                var meta = kclass[META] = {protoMember: {}, privateMember: [], name: name};
 
-            return kclass;
-        };
+                var proto = kclass.prototype;
+                u.eachObject(
+                    overrides,
+                    function (value, key) {
+                        if (typeof value === 'function') {
+                            value[NAME_PROPERTY] = key;
+                            value[OWNER_PROPERTY] = kclass;
+                        }
 
-        /**
-         *
-         * @type {Function} creates a new object with the specified prototype object and properties.
-         *  Just equals `Object.create` method.
-         * @param proto {Object} The object which should be the prototype of the newly-created object.
-         * @return {Object}
-         */
-        Class.static = typeof Object.create === 'function'
-            ? Object.create
-            : function (o) {
+                        if (key !== PRIVATE_KEY) {
+                            // 这里不能直接赋值，否则会触发从原型链继承下来的 setter，导致值设置出错
+                            setValue(proto, key, value);
+                            meta.protoMember[key] = true;
+                        }
+                    }
+                );
+
+                Class.definePrivateMembers(kclass, overrides[PRIVATE_KEY] || []);
+
+                return kclass;
+            };
+
+            /**
+             *
+             * @type {Function} creates a new object with the specified prototype object and properties.
+             *  Just equals `Object.create` method.
+             * @param proto {Object} The object which should be the prototype of the newly-created object.
+             * @return {Object}
+             */
+            Class.static = typeof Object.create === 'function' ? Object.create : createStatic;
+
+            function createStatic(o) {
                 if (arguments.length > 1) {
                     throw new Error('Second argument not supported');
                 }
@@ -131,140 +161,105 @@ void function (define) {
                 }
                 Empty.prototype = o;
                 return new Empty();
-            };
-
-        /**
-         * 创建类的方法
-         *
-         * @param {Function} BaseClass 类构造函数
-         * @param {Object} [exports] 类属性的对象
-         */
-        Class.defineMembers = function (BaseClass, exports) {
-            exports = exports || {};
-            if (typeof BaseClass !== 'function') {
-                throw new TypeError('First argument must be a function');
             }
 
-            var proto = BaseClass.prototype;
-            eachObject(
-                exports,
-                function (value, key) {
-                    if (typeof value === 'function') {
-                        value[NAME_PROPERTY_NAME] = key;
-                        value[OWNER_PROPERTY_NAME] = BaseClass;
+            /**
+             * 创建类的方法
+             *
+             * @param {Function} BaseClass 类构造函数
+             * @param {Object} [members] 类属性的对象
+             */
+            Class.defineMembers = function (BaseClass, members) {
+                members = members || {};
+                if (typeof BaseClass !== 'function') {
+                    throw new TypeError('First argument must be a function');
+                }
+
+                var proto = BaseClass.prototype;
+                u.eachObject(
+                    members,
+                    function (value, key) {
+                        if (typeof value === 'function') {
+                            value[NAME_PROPERTY] = key;
+                            value[OWNER_PROPERTY] = BaseClass;
+                        }
+                        proto[key] = value;
                     }
-                    proto[key] = value;
-                }
-            );
-        };
-
-        /**
-         * 统一 toString 执行结果
-         *
-         * @static
-         * @return {string}
-         */
-        Class.toString = function () {
-            return 'function Class() { [native code] }';
-        };
-
-        Class.prototype = {
-            constructor: function () {},
-            $self: Class,
-            $superClass: Object,
-            $super: function (args) {
-                var method = this.$super.caller;
-                var name = method[NAME_PROPERTY_NAME];
-                var superClass = method[OWNER_PROPERTY_NAME].$superClass;
-                var superMethod = superClass.prototype[name];
-
-                if (typeof superMethod !== 'function') {
-                    throw new TypeError('Call the super class\'s ' + name + ', but it is not a function!');
-                }
-
-                return superMethod.apply(this, args);
-            }
-        };
-
-        /**
-         * 返回基类的一个继承对象
-         *
-         * @ignore
-         * @param {Function} BaseClass 基类
-         * @return {Function}
-         */
-        function inherit(BaseClass) {
-            var kclass = function () {
-                // 若未进行 constructor 的重写，则klass.prototype.constructor指向BaseClass.prototype.constructor
-                return kclass.prototype.constructor.apply(this, arguments);
+                );
             };
 
-            Empty.prototype = BaseClass.prototype;
+            Class.definePrivateMembers = require('./definePrivateMembers');
 
-            var proto = kclass.prototype = new Empty();
-            proto.$self = kclass;
-            if (!('$super' in proto)) {
-                proto.$super = Class.prototype.$super;
-            }
+            /**
+             * 统一 toString 执行结果
+             *
+             * @static
+             * @return {string}
+             */
+            Class.toString = function () {
+                return 'function Class() { [native code] }';
+            };
 
-            kclass.$superClass = BaseClass;
+            Class[META] = {protoMember: {}, privateMember: [], name: 'EooClass'};
 
-            return kclass;
-        }
+            Class.prototype = {
+                constructor: function () {},
+                $self: Class,
+                $superClass: Object,
+                $super: function (args) {
+                    var method = this.$super.caller;
+                    var name = method[NAME_PROPERTY];
+                    var superClass = method[OWNER_PROPERTY].$superClass;
+                    var superMethod = superClass.prototype[name];
 
-        var hasEnumBug = !({ toString: 1 }.propertyIsEnumerable('toString'));
-        var enumProperties = [
-            'constructor',
-            'hasOwnProperty',
-            'isPrototypeOf',
-            'propertyIsEnumerable',
-            'toString',
-            'toLocaleString',
-            'valueOf'
-        ];
+                    if (typeof superMethod !== 'function') {
+                        throw new TypeError('Call the super class\'s ' + name + ', but it is not a function!');
+                    }
 
-        /**
-         * hasOwnProperty函数的封装
-         *
-         * @ignore
-         * @param {Object} obj 对象
-         * @param {string} key 属性名
-         * @return {boolean}
-         */
-        function hasOwnProperty(obj, key) {
-            return Object.prototype.hasOwnProperty.call(obj, key);
-        }
-
-        /**
-         * 遍历对象操作
-         *
-         * @ignore
-         * @param {Object} obj 目标对象
-         * @param {Function} fn 遍历操作
-         */
-        function eachObject(obj, fn) {
-            for (var k in obj) {
-                hasOwnProperty(obj, k) && fn(obj[k], k, obj);
-            }
-            //ie6-8 enum bug
-            if (hasEnumBug) {
-                for (var i = enumProperties.length - 1; i > -1; --i) {
-                    var key = enumProperties[i];
-                    hasOwnProperty(obj, key) && fn(obj[key], key, obj);
+                    return superMethod.apply(this, args);
                 }
+            };
+
+            /**
+             * 返回基类的一个继承对象
+             *
+             * @ignore
+             * @param {Function} BaseClass 基类
+             * @return {Function}
+             */
+            function inherit(BaseClass) {
+                var kclass = function () {
+                    // 若未进行 constructor 的重写，则klass.prototype.constructor指向BaseClass.prototype.constructor
+                    return kclass.prototype.constructor.apply(this, arguments);
+                };
+
+                Empty.prototype = BaseClass.prototype;
+
+                var proto = kclass.prototype = new Empty();
+                proto.$self = kclass;
+                if (!('$super' in proto)) {
+                    proto.$super = Class.prototype.$super;
+                }
+
+                kclass.$superClass = BaseClass;
+
+                return kclass;
             }
-        }
 
-        /**
-         * toString method
-         *
-         * @ignore
-         * @return {string}
-         */
-        function toString() {
-            return this.prototype.constructor.toString();
-        }
+            /**
+             * toString method
+             *
+             * @ignore
+             * @return {string}
+             */
+            function toString() {
+                return this.prototype.constructor.toString();
+            }
 
-        return Class;
-    });
-}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
+            return Class;
+        });
+}(typeof define === 'function' && define.amd ? define :
+        function (factory) {
+            module.exports = factory(require);
+        }
+);

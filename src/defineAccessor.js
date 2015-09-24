@@ -1,11 +1,12 @@
 /**
- * Created by exodia on 14-8-28.
+ * @file defineAccessor 提供快捷定义 getter/setter 功能
+ * @author exodia(d_xinxin@163.com)
  */
 void function (define, undefined) {
 
     define(
         function (require) {
-            var MEMBERS = '__eooPrivateMembers__';
+            var MEMBERS = require('./const').INTERNAL_MEMBER;
 
             function simpleGetter(name) {
                 var body = 'return typeof this.' + MEMBERS + ' === \'object\' ? this.'
@@ -15,7 +16,7 @@ void function (define, undefined) {
 
             function simpleSetter(name) {
                 var body = 'this.' + MEMBERS + ' = this.' + MEMBERS + ' || {};\n'
-                    + 'this.' + MEMBERS + '[\'' + name + '\'] = value;' ;
+                    + 'this.' + MEMBERS + '[\'' + name + '\'] = value;';
                 return new Function('value', body);
             }
 
@@ -45,4 +46,8 @@ void function (define, undefined) {
         }
     );
 
-}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
+}(typeof define === 'function' && define.amd ? define :
+        function (factory) {
+            module.exports = factory(require);
+        }
+);
