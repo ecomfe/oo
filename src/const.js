@@ -11,6 +11,7 @@ void function (define) {
                 INTERNAL_MEMBER: '__eooPrivateMembers__',
                 PRIVATE_KEY: '$private',
                 META: '__eooMeta__',
+                ATTRIBUTE_PREFIX: '__eooAttribute__',
                 EMPTY_DESCRIPTOR: {configurable: true, writable: true, enumerable: true, value: undefined}
             };
         }

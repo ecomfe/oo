@@ -7,24 +7,12 @@ void function (define) {
         function (require) {
             var Empty = function () { };
             var constTable = require('./const');
-            var NAME_PROPERTY = constTable.NAME;
-            var OWNER_PROPERTY = constTable.OWNER;
+            var NAME = constTable.NAME;
+            var OWNER = constTable.OWNER;
             var PRIVATE_KEY = constTable.PRIVATE_KEY;
             var META = constTable.META;
             var u = require('./util');
-
-            var setValue = function (proto, property, value) {
-                proto[property] = value;
-            };
-
-            if (Object.defineProperty) {
-                setValue = function (proto, property, value) {
-                    Object.defineProperty(proto, property, {
-                        configurable: true, writable: true,
-                        enumerable: true, value: value
-                    });
-                };
-            }
+            var uuid = 0;
 
             /**
              * 简单的 js oo 库
@@ -119,26 +107,29 @@ void function (define) {
 
                 var kclass = inherit(BaseClass);
                 kclass.toString = toString;
-                var meta = kclass[META] = {protoMember: {}, privateMember: [], name: name};
+                var meta = kclass[META] = {protoMember: {}, privateMember: {}, name: name, uuid: ++uuid};
 
-                var proto = kclass.prototype;
+                var assigner = getAssigner(kclass);
                 u.eachObject(
                     overrides,
                     function (value, key) {
-                        if (typeof value === 'function') {
-                            value[NAME_PROPERTY] = key;
-                            value[OWNER_PROPERTY] = kclass;
-                        }
-
                         if (key !== PRIVATE_KEY) {
-                            // 这里不能直接赋值，否则会触发从原型链继承下来的 setter，导致值设置出错
-                            setValue(proto, key, value);
+                            assigner(value, key);
                             meta.protoMember[key] = true;
                         }
                     }
                 );
 
-                Class.definePrivateMembers(kclass, overrides[PRIVATE_KEY] || []);
+                var privateList = [];
+                u.eachObject(
+                    overrides[PRIVATE_KEY] || {},
+                    function (value, key) {
+                        assigner(value, key);
+                        privateList.push(key);
+                    }
+                );
+
+                Class.definePrivateMembers(kclass, privateList);
 
                 return kclass;
             };
@@ -175,17 +166,7 @@ void function (define) {
                     throw new TypeError('First argument must be a function');
                 }
 
-                var proto = BaseClass.prototype;
-                u.eachObject(
-                    members,
-                    function (value, key) {
-                        if (typeof value === 'function') {
-                            value[NAME_PROPERTY] = key;
-                            value[OWNER_PROPERTY] = BaseClass;
-                        }
-                        proto[key] = value;
-                    }
-                );
+                u.eachObject(members, getAssigner(BaseClass));
             };
 
             Class.definePrivateMembers = require('./definePrivateMembers');
@@ -200,7 +181,7 @@ void function (define) {
                 return 'function Class() { [native code] }';
             };
 
-            Class[META] = {protoMember: {}, privateMember: [], name: 'EooClass'};
+            Class[META] = {protoMember: {}, privateMember: {}, name: 'EooClass'};
 
             Class.prototype = {
                 constructor: function () {},
@@ -208,8 +189,8 @@ void function (define) {
                 $superClass: Object,
                 $super: function (args) {
                     var method = this.$super.caller;
-                    var name = method[NAME_PROPERTY];
-                    var superClass = method[OWNER_PROPERTY].$superClass;
+                    var name = method[NAME];
+                    var superClass = method[OWNER].$superClass;
                     var superMethod = superClass.prototype[name];
 
                     if (typeof superMethod !== 'function') {
@@ -254,6 +235,16 @@ void function (define) {
              */
             function toString() {
                 return this.prototype.constructor.toString();
+            }
+
+            function getAssigner(Class) {
+                return function (value, key) {
+                    if (typeof value === 'function') {
+                        value[NAME] = key;
+                        value[OWNER] = Class;
+                    }
+                    Class.prototype[key] = value;
+                };
             }
 
             return Class;
