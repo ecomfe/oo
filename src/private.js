@@ -6,29 +6,20 @@
 
     define(
         function (require) {
-            var TOKEN = require('./constant').INSTANCE_TOKEN;
+            var STORE = require('./constant').PRIVATE_STORE;
             var inheritObject = require('./static');
-
-            function PrivateStore(prototype) {
-                this.store = {};
-                this.uuid = 0;
-                this.prototype = prototype || {};
-            }
-
-            PrivateStore.prototype.get = function (instance) {
-                if (!instance.hasOwnProperty(TOKEN)) {
-                    instance[TOKEN] = ++this.uuid;
-                }
-
-                var token = instance[TOKEN];
-                this.store[token] = this.store[token] || inheritObject(this.prototype);
-                return this.store[token];
-            };
+            var uuid = 0;
 
             return function createPrivate(prototype) {
-                var store = new PrivateStore(prototype);
+                var token = ++uuid;
                 return function getPrivate(instance) {
-                    return store.get(instance);
+                    if (!instance.hasOwnProperty(STORE)) {
+                        instance[STORE] = {};
+                    }
+
+                    var store = instance[STORE];
+                    store[token] = store[token] || inheritObject(prototype);
+                    return store[token];
                 };
             };
         }

@@ -73,7 +73,7 @@ describe('Class Private feature test: ', function () {
                 privateMethodInSuper: function () {
                     return $subPrivate(this).privateMethodOfSub.call(this);
                 },
-                callAnothoerInstancePrivateMethodSub: function (instance, method) {
+                callAnotherInstancePrivateMethodSub: function (instance, method) {
                     return $subPrivate(instance)[method].call(instance);
                 },
                 getAnotherInstancePrivatePropertyOfSub: function (ins, property) {
@@ -83,23 +83,20 @@ describe('Class Private feature test: ', function () {
 
 
             var $sub1Private = oo.createPrivate({
-                privatePropOfSub1: 'privatePropOfSub1',
                 privateMethodOfSub1: function () {
-                    return this.privatePropOfSub1;
+                    return $sub1Private(this).privatePropOfSub1;
                 },
                 privateMethod: function () {
-                    return this.privateMethodOfSub1();
+                    return $sub1Private(this).privateMethodOfSub1.call(this);
                 }
             });
             Sub1 = oo(Sub, {
                 constructor: function Sub1() {
                     this.$super(arguments);
+                    $sub1Private(this).privatePropOfSub1 = 'privatePropOfSub1';
                 },
-                privateMethodOfSub: function () {
+                callPrivateMethodOfSub1: function () {
                     return $sub1Private(this).privateMethod.call(this);
-                },
-                publicMethodOfSub1: function () {
-                    return 'publicMethodOfSub1';
                 },
                 getAnotherInstancePrivatePropertyOfSub1: function (ins, property) {
                     return $sub1Private(ins)[property];
@@ -181,6 +178,11 @@ describe('Class Private feature test: ', function () {
             expect(sub.privateProp).toBe(undefined);
         });
 
+        it('access private property of another instance of the same class ' +
+        'from public method should allow', function () {
+            expect(sub.callAnotherInstancePrivateMethodSub(anotherSub, 'privateMethodOfSub')).toBe('privatePropOfSub');
+        });
+
         it('access private property of another instance of the derived class ' +
         'from current instance method should allow', function () {
             expect(sup.callAnotherInstancePrivateMethod(sub, 'privateMethod')).toBe('privateMethod');
@@ -216,8 +218,12 @@ describe('Class Private feature test: ', function () {
             anotherSub = new Sub1();
         });
 
-        it('access private property from none class instance method should throw error', function () {
+        it('access private property from none class instance method should return undefined', function () {
             expectUndefined(sub, sub1PrivateMethods);
+        });
+
+        it('access private member from public method should allow', function () {
+            expect(sub.callPrivateMethodOfSub1()).toBe('privatePropOfSub1');
         });
 
         it('access a public property which is private in super class should allow', function () {
@@ -239,7 +245,8 @@ describe('Class Private feature test: ', function () {
         'from derived instance method should allow', function () {
             expect(sub.callAnotherInstancePrivateMethod(anotherSub, 'privateMethod')).toBe('privateMethod');
             expect(sub.callAnotherInstancePrivateMethod(sup, 'privateMethodInSuper')).toBe('');
+            expect(sub.getAnotherInstancePrivatePropertyOfSub1(anotherSub, 'privatePropOfSub1'))
+                .toBe('privatePropOfSub1');
         });
-
     });
 });
