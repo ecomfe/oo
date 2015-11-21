@@ -1,13 +1,20 @@
 /**
- * Created by exodia on 14-8-28.
+ * @file main 入口文件
+ * @author exodia(d_xinxin@163.com)
  */
-void function (define) {
+(function (define) {
     define(
         function (require) {
-            var oo = require('./oo');
+            var oo = require('./class');
             oo.defineAccessor = require('./defineAccessor');
+            oo.static = require('./static');
+            oo.createPrivate = require('./private');
 
             return oo;
         }
     );
-}(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
+})(typeof define === 'function' && define.amd ? define :
+        function (factory) {
+            module.exports = factory(require);
+        }
+);
