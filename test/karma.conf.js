@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Tue Jun 03 2014 23:30:03 GMT+0800 (CST)
+var preprocessors = process.argv.indexOf('--debug') == -1 ? {'src/*.js': ['coverage']} : {};
 
 module.exports = function (config) {
     config.set({
@@ -21,15 +22,12 @@ module.exports = function (config) {
 
 
         // list of files to exclude
-        exclude: [
-        ],
+        exclude: [],
 
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'src/*.js': ['coverage']
-        },
+        preprocessors: preprocessors,
 
 
         // test results reporter to use
