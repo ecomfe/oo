@@ -16,8 +16,8 @@
              * @return {Object}
              */
             function createStatic(o) {
-                if (!(o instanceof Object)) {
-                    throw new TypeError('Argument must be an object');
+                if (typeof o !== 'object') {
+                    throw new TypeError('Object prototype may only be an Object or null: ' + o);
                 }
                 Empty.prototype = o;
                 return new Empty();

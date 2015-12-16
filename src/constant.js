@@ -9,6 +9,7 @@
                 NAME: '__eooName__',
                 OWNER: '__eooOwner__',
                 INTERNAL_MEMBER: '__eooInternalMembers__',
+                META: '__eooMeta__',
                 PRIVATE_STORE: '__eooPrivateStore__'
             };
         }

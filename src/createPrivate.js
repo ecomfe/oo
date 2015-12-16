@@ -10,6 +10,10 @@
             var inheritObject = require('./static');
             var uuid = 0;
 
+            var getUUID = function () {
+                return ++uuid;
+            };
+
             /**
              * create a private object whose prototype points the first param if has,
              * and return a token function which accept an object as param,
@@ -20,17 +24,37 @@
              * @return {Function} a token function which accept an object,
              * it will return the private part of the object, and do not expose the token function to the outside.
              */
-            return function createPrivate(prototype) {
-                var token = ++uuid;
-                return function getPrivate(instance) {
+            return function createPrivate(prototype, owner) {
+                prototype = prototype || Object.prototype;
+                var token = getUUID();
+                var setOwner = function (fn) {
+                    owner = fn;
+                };
+
+                var getPrivate = function getPrivate(instance) {
+
                     if (!instance.hasOwnProperty(STORE)) {
                         instance[STORE] = {};
                     }
 
                     var store = instance[STORE];
-                    store[token] = store[token] || inheritObject(prototype);
+                    if (store.hasOwnProperty('' + token)) {
+                        return store[token];
+                    }
+
+                    store[token] = inheritObject(prototype);
                     return store[token];
                 };
+
+                getPrivate.setOwner = setOwner;
+                getPrivate.getPrototype = function () {
+                    return prototype;
+                };
+                getPrivate.setPrototype = function (value) {
+                    prototype = value;
+                };
+
+                return getPrivate;
             };
         }
     );
@@ -39,6 +63,6 @@
     typeof define === 'function' && define.amd
         ? define
         : function (factory) {
-            module.exports = factory(require);
-        }
+        module.exports = factory(require);
+    }
 );

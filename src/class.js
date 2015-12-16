@@ -9,6 +9,8 @@
             var constant = require('./constant');
             var NAME = constant.NAME;
             var OWNER = constant.OWNER;
+            var META = constant.META;
+            var KEY_WORDS = ['$protect'];
             var u = require('./util');
 
             /**
@@ -105,6 +107,10 @@
                 kclass.toString = toString;
 
                 u.eachObject(overrides, getAssigner(kclass));
+                kclass[META] = {};
+                if (typeof overrides.$protect === 'function') {
+                    require('./defineProtect')(kclass, overrides.$protect);
+                }
 
                 return kclass;
             };
@@ -191,6 +197,9 @@
 
             function getAssigner(Class) {
                 return function (value, key) {
+                    if (u.indexOf(KEY_WORDS, key) !== -1) {
+                        return;
+                    }
                     if (typeof value === 'function') {
                         value[NAME] = key;
                         value[OWNER] = Class;
@@ -205,6 +214,6 @@
     typeof define === 'function' && define.amd
         ? define
         : function (factory) {
-            module.exports = factory(require);
-        }
+        module.exports = factory(require);
+    }
 );

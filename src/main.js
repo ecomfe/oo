@@ -8,7 +8,8 @@
             var oo = require('./class');
             oo.defineAccessor = require('./defineAccessor');
             oo.static = require('./static');
-            oo.createPrivate = require('./private');
+            oo.createPrivate = require('./createPrivate');
+            oo.defineProtect = require('./defineProtect');
 
             return oo;
         }

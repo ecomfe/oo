@@ -91,6 +91,9 @@ describe('Class Protect feature test: ', function () {
                 callProtectMethod: function (method) {
                     return $subProtect(this)[method].apply(this, [].slice.call(arguments, 1));
                 },
+                callParentProtectMethod: function (method) {
+                    return $subProtect(this).$super[method].apply(this, [].slice.call(arguments, 1));
+                },
                 $protect: $subProtect
             });
 
@@ -115,8 +118,11 @@ describe('Class Protect feature test: ', function () {
                 getAnotherInstanceProtectPropertyOfSub1: function (ins, property) {
                     return $sub1Protect(ins)[property];
                 },
-                callParentProtectMethod: function (method) {
+                callParentInheritProtectMethod: function (method) {
                     return $sub1Protect(this)[method].apply(this, [].slice.call(arguments, 1));
+                },
+                callParentProtectMethod: function (method) {
+                    return $sub1Protect(this).$super[method].apply(this, [].slice.call(arguments, 1));
                 },
                 $protect: $sub1Protect
             });
@@ -238,6 +244,12 @@ describe('Class Protect feature test: ', function () {
 
         });
 
+
+        it('protect $super call', function () {
+            var sub = new Sub();
+            expect(sub.callParentProtectMethod('protectMethodInSuper')).toBe('');
+            expect(sub.callParentProtectMethod('protectFromListMethod')).toBe('protectFromListMethod');
+        });
     });
 
     describe('Deep inheritance protect test: ', function () {
@@ -299,17 +311,27 @@ describe('Class Protect feature test: ', function () {
             expect(sub.callProtectMethodOfSub1()).toBe('protectPropOfSub1');
 
             // from Sub
-            expect(sub.callParentProtectMethod('getProtectProp', 'duplicateProtectProp')).toBe(30);
-            expect(sub.callParentProtectMethod('protectMethodInSuper')).toBe('override protectMethodInSuper');
+            expect(sub.callParentInheritProtectMethod('getProtectProp', 'duplicateProtectProp')).toBe(30);
+            expect(sub.callParentInheritProtectMethod('protectMethodInSuper')).toBe('override protectMethodInSuper');
 
             // from Super
-            expect(sub.callParentProtectMethod('getProtectProp', 'protectFromList')).toBe(20);
-            expect(sub.callParentProtectMethod('getProtectProp', 'protectProp')).toBe(15);
-            expect(sub.callParentProtectMethod('protectFromListMethod')).toBe('protectFromListMethod');
+            expect(sub.callParentInheritProtectMethod('getProtectProp', 'protectFromList')).toBe(20);
+            expect(sub.callParentInheritProtectMethod('getProtectProp', 'protectProp')).toBe(15);
+            expect(sub.callParentInheritProtectMethod('protectFromListMethod')).toBe('protectFromListMethod');
 
             // override
-            expect(sub.callParentProtectMethod('protectMethod')).toBe('protectPropOfSub1');
+            expect(sub.callParentInheritProtectMethod('protectMethod')).toBe('protectPropOfSub1');
         });
 
+
+        it('protect $super call', function () {
+            var sub = new Sub1();
+            // from Sub
+            expect(sub.callParentProtectMethod('protectMethodInSuper')).toBe('override protectMethodInSuper');
+            expect(sub.callParentProtectMethod('getProtectProp', 'protectPropOfSub')).toBe('protectPropOfSub');
+            // from Super
+            expect(sub.callParentProtectMethod('protectFromListMethod')).toBe('protectFromListMethod');
+            expect(sub.callParentProtectMethod('protectMethod')).toBe('protectMethod');
+        });
     });
 });
