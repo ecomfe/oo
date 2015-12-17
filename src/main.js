@@ -8,13 +8,16 @@
             var oo = require('./class');
             oo.defineAccessor = require('./defineAccessor');
             oo.static = require('./static');
-            oo.createPrivate = require('./private');
+            oo.createPrivate = require('./createPrivate');
+            oo.defineProtect = require('./defineProtect');
 
             return oo;
         }
     );
-})(typeof define === 'function' && define.amd ? define :
-        function (factory) {
+})(
+    typeof define === 'function' && define.amd
+        ? define
+        : function (factory) {
             module.exports = factory(require);
         }
 );

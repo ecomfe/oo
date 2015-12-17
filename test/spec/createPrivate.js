@@ -1,5 +1,5 @@
 /**
- * @file private 特性测试用例
+ * @file private.js private feature test case
  * @author exodia(d_xinxin@163.com)
  */
 describe('Class Private feature test: ', function () {

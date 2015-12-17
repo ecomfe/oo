@@ -12,6 +12,7 @@
         "url": "git://github.com/ecomfe/oo.git"
     },
     "scripts": {
+        "start": "cd test && karma start --debug",
         "test": "cd test && karma start --singleRun"
     },
     "contributors": [

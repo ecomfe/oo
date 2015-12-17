@@ -9,12 +9,15 @@
                 NAME: '__eooName__',
                 OWNER: '__eooOwner__',
                 INTERNAL_MEMBER: '__eooInternalMembers__',
+                META: '__eooMeta__',
                 PRIVATE_STORE: '__eooPrivateStore__'
             };
         }
     );
-})(typeof define === 'function' && define.amd ? define :
-        function (factory) {
+})(
+    typeof define === 'function' && define.amd
+        ? define
+        : function (factory) {
             module.exports = factory(require);
         }
 );
