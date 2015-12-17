@@ -24,12 +24,9 @@
              * @return {Function} a token function which accept an object,
              * it will return the private part of the object, and do not expose the token function to the outside.
              */
-            return function createPrivate(prototype, owner) {
+            return function createPrivate(prototype) {
                 prototype = prototype || Object.prototype;
                 var token = getUUID();
-                var setOwner = function (fn) {
-                    owner = fn;
-                };
 
                 var getPrivate = function getPrivate(instance) {
 
@@ -46,7 +43,6 @@
                     return store[token];
                 };
 
-                getPrivate.setOwner = setOwner;
                 getPrivate.getPrototype = function () {
                     return prototype;
                 };

@@ -6,14 +6,13 @@
 
     define(
         function (require) {
-            var META = require('./constant');
+            var META = require('./constant').META;
             var u = require('./util');
             var inheritStatic = require('./static');
 
             function defineProtect(Class, privateToken) {
                 Class[META] = Class[META] || {};
                 Class[META].protectToken = privateToken;
-                privateToken.setOwner(Class);
                 if (Class.$superClass && Class.$superClass[META] && Class.$superClass[META].protectToken) {
                     var parentProtect = Class.$superClass[META].protectToken.getPrototype();
                     var currentProtect = privateToken.getPrototype();

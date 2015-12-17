@@ -162,3 +162,50 @@ alert(my.getPrivateProp()); // 'privateProp'
 alert(my.callPrivateMethod()); // 'privateProp'
 
 ```
+
+### Class.defineProtect
+define a privateToken created by Class.createPrivate as the protectToken of the class
+
+```javascript
+var $protect = Class.createPrivate({
+    protectMethod: function () {
+        console.log('call Super protectMethod');
+    },
+    method: function () {
+        console.log('call method');
+    }
+    });
+
+var Super = Class({
+    callProtectMethod: function () {
+        return $protect(this).protectMethod();
+    },
+    $protect: $protect // config sugar, eoo will call Class.defineProtect internal;
+});
+
+var $subProtect = Class.createPrivate({
+    protectMethod: function () {
+        console.log('call Sub protectMethod');
+        // call super class protect method from $super keyword;
+        $subProtect(this).$super.protectMethod();
+    }
+});
+var Sub = Class(Super, {
+    invoke: function () {
+        $subProtect(this).method();
+        $subProtect(this).protectMethod();
+    }
+});
+
+Class.defineProtect(Sub, $subProtect);
+
+var s = new Sub();
+
+// 'call method'
+// 'call Sub protectMethod'
+// 'call Super protectMethod'
+s.invoke();
+
+```
+
+
