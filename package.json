@@ -1,6 +1,6 @@
 {
     "name": "eoo",
-    "version": "0.2.0.alpha.1",
+    "version": "0.2.0-alpha.1",
     "description": "A powerful Javascript Class Factory (Object oriented)",
     "main": "src/main.js",
     "maintainers": {
