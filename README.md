@@ -127,3 +127,85 @@ instance.method(); // 'super method'; 'sub method';
 
 ```
 
+
+### Class.createPrivate
+create a private object whose prototype points the first param if has,
+and return a token function which accept an object as param,
+call the token function with an object, it will return the private part of the object,
+because the private part is just a object, you can do any operation on it.
+Do not expose the token function to the outside.
+
+```javascript
+// MyClass.js
+// $private is a secret token function, and used in the module scope.
+var $private = Class.createPrivate({
+    // this method is on the prototype shared by all instance passed from the $private function
+    privatePrototypeMethod: function () {
+        return this.getPrivateProp();
+    }
+});
+
+var MyClass = Class({
+    constructor: function () {
+        $private(this).privateProp = 'privateProp';
+    },
+    getPrivateProp: function () {
+        return $private(this).privateProp;
+    },
+    callPrivateMethod: function () {
+        $private(this).privatePrototypeMethod.call(this);
+    }
+});
+
+var my = new MyClass();
+alert(my.getPrivateProp()); // 'privateProp'
+alert(my.callPrivateMethod()); // 'privateProp'
+
+```
+
+### Class.defineProtect
+define a privateToken created by Class.createPrivate as the protectToken of the class
+
+```javascript
+var $protect = Class.createPrivate({
+    protectMethod: function () {
+        console.log('call Super protectMethod');
+    },
+    method: function () {
+        console.log('call method');
+    }
+    });
+
+var Super = Class({
+    callProtectMethod: function () {
+        return $protect(this).protectMethod();
+    },
+    $protect: $protect // config sugar, eoo will call Class.defineProtect internal;
+});
+
+var $subProtect = Class.createPrivate({
+    protectMethod: function () {
+        console.log('call Sub protectMethod');
+        // call super class protect method from $super keyword;
+        $subProtect(this).$super.protectMethod();
+    }
+});
+var Sub = Class(Super, {
+    invoke: function () {
+        $subProtect(this).method();
+        $subProtect(this).protectMethod();
+    }
+});
+
+Class.defineProtect(Sub, $subProtect);
+
+var s = new Sub();
+
+// 'call method'
+// 'call Sub protectMethod'
+// 'call Super protectMethod'
+s.invoke();
+
+```
+
+
