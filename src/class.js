@@ -20,42 +20,42 @@
              *      @example
              *      // 来个简单的基类，最简单的是 var Super = Class();
              *      var Super = Class({
-         *          superProp1: 'superProp1',
-         *          superProp2: 'superProp2',
-         *          method: function(){
-         *              alert(this.superProp1);
-         *          },
-         *          superMethod2: function(){
-         *              alert(this.superProp2);
-         *          }
-         *      })
+             *          superProp1: 'superProp1',
+             *          superProp2: 'superProp2',
+             *          method: function(){
+             *              alert(this.superProp1);
+             *          },
+             *          superMethod2: function(){
+             *              alert(this.superProp2);
+             *          }
+             *      })
              *
              *      // 来个派生类，继承 Super
              *      var Sub = Class(Super, {
-         *          // constructor 会在实例化时调用
-         *          constructor: function(prop){
-         *             // $super 会自动调用父类的同名方法
-         *             this.$super(arguments)
-         *             this.subProp = prop
-         *             alert("Sub init")
-         *          },
-         *          method: function(){
-         *              this.$super(arguments);
-         *              alert(this.subProp);
-         *          }
-         *      })
+             *          // constructor 会在实例化时调用
+             *          constructor: function(prop){
+             *             // $super 会自动调用父类的同名方法
+             *             this.$super(arguments)
+             *             this.subProp = prop
+             *             alert("Sub init")
+             *          },
+             *          method: function(){
+             *              this.$super(arguments);
+             *              alert(this.subProp);
+             *          }
+             *      })
              *
              *      var Sub1 = Class(Sub, {
-         *          constructor: function(prop1, prop2){
-         *             this.$super(arguments)
-         *             this.sub1Prop = prop2;
-         *             alert("Sub1 init")
-         *          },
-         *          method: function(){
-         *              this.$super(arguments)
-         *              alert(this.sub1Prop)
-         *          }
-         *      })
+             *          constructor: function(prop1, prop2){
+             *             this.$super(arguments)
+             *             this.sub1Prop = prop2;
+             *             alert("Sub1 init")
+             *          },
+             *          method: function(){
+             *              this.$super(arguments)
+             *              alert(this.sub1Prop)
+             *          }
+             *      })
              *
              *      var superIns = new Super();
              *      var sub = new Sub('Sub'); // alert: Sub init
@@ -104,9 +104,11 @@
                 }
 
                 var kclass = inherit(BaseClass);
+
                 kclass.toString = toString;
 
                 u.eachObject(overrides, getAssigner(kclass));
+
                 kclass[META] = {};
                 if (typeof overrides.$protect === 'function') {
                     require('./defineProtect')(kclass, overrides.$protect);
@@ -185,6 +187,8 @@
                 return kclass;
             }
 
+            var toFunctionString = Function.prototype.toString;
+
             /**
              * toString method
              *
@@ -192,7 +196,7 @@
              * @return {string}
              */
             function toString() {
-                return this.prototype.constructor.toString();
+                return toFunctionString.call(this.prototype.constructor);
             }
 
             function getAssigner(Class) {

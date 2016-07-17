@@ -54,12 +54,31 @@ module.exports = function (config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
+        autoWatch: true,
 
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome', 'IE'],
+        browsers: process.env.TRAVIS ? ['Chrome_travis_ci'] : ['Chrome'],
+
+        customLaunchers: {
+            Edge: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=edge'
+            },
+            IE10: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=EmulateIE10'
+            },
+            IE9: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=EmulateIE9'
+            },
+            Chrome_travis_ci: {
+                base: 'Chrome',
+                flags: ['--no-sandbox']
+            }
+        },
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits

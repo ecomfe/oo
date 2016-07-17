@@ -291,6 +291,20 @@ describe(
             it('Should return \"function Class() { [native code] }\"', function () {
                 expect(Class.toString()).toEqual('function Class() { [native code] }');
             });
+
+            it('Class#toString should equal to the constructor toString', function () {
+                var Super = Class.create({});
+
+                var Sub = function () {
+                    return {};
+                };
+
+                var result = Sub.toString();
+                if (Object.setPrototypeOf) {
+                    Object.setPrototypeOf(Sub, Super);
+                    expect(Sub.toString()).toBe(result);
+                }
+            })
         });
 
         describe('Class.defineMembers', function () {
@@ -364,7 +378,6 @@ describe(
                 expect(sub1.superMethod()).toEqual('superProp2');
             });
         });
-
     }
 );
 
