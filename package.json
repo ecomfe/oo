@@ -42,6 +42,10 @@
     "bugs": {
         "url": "https://github.com/ecomfe/oo/issues"
     },
+    "files": [
+        "src",
+        "README.md"
+    ],
     "homepage": "https://github.com/ecomfe/oo",
     "devDependencies": {
         "jasmine-core": "^2.3.4",
